@@ -1,0 +1,17 @@
+{
+    "name": "bigfoot/ecircle-bundle",
+    "authors": [{
+        "name": "S.Huot",
+        "email": "s.huot@c2is.fr"
+    }],
+    "require": {
+        "bigfoot/core-bundle": "dev-master",
+        "camcima/camcima-soap-client": "dev-master"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "": "src/"
+        }
+    }
+}

@@ -1,0 +1,7 @@
+parameters:
+    bigfoot_ecircle.client.class: 'Bigfoot\Bundle\EcircleBundle\Services\BigfootEcircleClient'
+
+services:
+    bigfoot_ecircle.client:
+        class: '%bigfoot_ecircle.client.class%'
+        arguments: [@service_container]
