@@ -7,7 +7,7 @@ EcircleBundle is part of the framework BigFoot created by C2IS.
 Installation
 ------------
 
-Add 'bigfoot/import-bundle' into your composer.json file in the 'require' section:
+Add 'bigfoot/ecircle-bundle' into your composer.json file in the 'require' section:
 
 ``` json
 // composer.json
