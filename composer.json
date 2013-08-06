@@ -1,17 +1,21 @@
 {
     "name": "bigfoot/ecircle-bundle",
-    "authors": [{
-        "name": "S.Huot",
-        "email": "s.huot@c2is.fr"
-    }],
-    "require": {
-        "bigfoot/core-bundle": "dev-master",
-        "camcima/camcima-soap-client": "dev-master"
-    },
-    "minimum-stability": "dev",
-    "autoload": {
-        "psr-0": {
-            "": "src/"
+    "type": "symfony-bundle",
+    "description": "Bigfoot ecircle bundle",
+    "keywords": [],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "S.Huot",
+            "email": "s.huot@c2is.fr"
         }
-    }
+    ],
+    "require": {
+        "bigfoot/core-bundle": "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "Bigfoot\\Bundle\\EcircleBundle": "" }
+    },
+    "target-dir": "Bigfoot/Bundle/EcircleBundle",
+    "minimum-stability": "dev"
 }
