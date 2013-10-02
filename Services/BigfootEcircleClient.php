@@ -36,7 +36,8 @@ class BigfootEcircleClient
     public function __construct($container)
     {
         $this->container = $container;
-        $this->client = new Client($this->container->getParameter('bigfoot_ecircle')['client']['wsdl_url']);
+        $ecircle = $this->container->getParameter('bigfoot_ecircle');
+        $this->client = new Client($ecircle['client']['wsdl_url']);
 
     }
 
@@ -58,8 +59,9 @@ class BigfootEcircleClient
             $options = new $optionsClassname;
 
             if ($scope) {
-                if (isset($this->container->getParameter('bigfoot_ecircle')['client']['request'][$scope])) {
-                    foreach ($this->container->getParameter('bigfoot_ecircle')['client']['request'][$scope] as $attribute => $value) {
+                $ecircle = $this->container->getParameter('bigfoot_ecircle');
+                if (isset($ecircle['client']['request'][$scope])) {
+                    foreach ($ecircle['client']['request'][$scope] as $attribute => $value) {
                         if (property_exists($options, $attribute)) {
                             $options->$attribute = $value;
                         }
