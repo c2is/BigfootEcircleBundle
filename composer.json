@@ -11,11 +11,16 @@
         }
     ],
     "require": {
-        "bigfoot/core-bundle": "dev-master"
+        "bigfoot/core-bundle": "~1.0"
     },
     "autoload": {
         "psr-0": { "Bigfoot\\Bundle\\EcircleBundle": "" }
     },
     "target-dir": "Bigfoot/Bundle/EcircleBundle",
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
 }
