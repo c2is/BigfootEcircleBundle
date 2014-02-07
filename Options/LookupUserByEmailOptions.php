@@ -9,4 +9,5 @@ class LookupUserByEmailOptions
 {
     public $session;
     public $email;
+    public $groupId;
 }

@@ -30,7 +30,6 @@ class BigfootEcircleClient
 
     protected $sessionId = null;
     protected $client = null;
-
     protected $container;
 
     public function __construct($container)
@@ -51,7 +50,7 @@ class BigfootEcircleClient
      * @return mixed
      * @throws Exception
      */
-    public function options($name, $scope = null)
+    public function options($name, $scope = null, $method = 'parameter')
     {
         try {
             $optionsClassname = sprintf(self::OPTIONS_CLASS_PATTERN, $name);
@@ -59,16 +58,26 @@ class BigfootEcircleClient
             $options = new $optionsClassname;
 
             if ($scope) {
-                $ecircle = $this->container->getParameter('bigfoot_ecircle');
-                if (isset($ecircle['client']['request'][$scope])) {
-                    foreach ($ecircle['client']['request'][$scope] as $attribute => $value) {
-                        if (property_exists($options, $attribute)) {
-                            $options->$attribute = $value;
+                if ($method == 'parameter') {
+                    $ecircle = $this->container->getParameter('bigfoot_ecircle');
+                    if (isset($ecircle['client']['request'][$scope])) {
+                        foreach ($ecircle['client']['request'][$scope] as $attribute => $value) {
+                            if (property_exists($options, $attribute)) {
+                                $options->$attribute = $value;
+                            }
                         }
                     }
                 }
+                else {
+                    $em = $this->container->get('doctrine')->getManager();
+                    $newsletter = $em->getRepository('SehBundle:Newsletter')->findOneByScope($scope);
+                    if ($newsletter) {
+                        $options->realm     = $newsletter->getRealm();
+                        $options->user      = $newsletter->getUser();
+                        $options->passwd    = $newsletter->getPassword();
+                    }
+                }
             }
-
             return $options;
         }
         catch (Exception $e) {
@@ -83,10 +92,10 @@ class BigfootEcircleClient
      * @param $scope String Key of the Ecircle account
      * @return $this
      */
-    public function connect($scope)
+    public function connect($scope,$method = 'parameter')
     {
-        $result = $this->client->logon($this->options('Logon', $scope));
-
+        $this->method = $method;
+        $result = $this->client->logon($this->options('Logon', $scope, $method));
         $this->sessionId = $result->logonReturn;
 
         return $this;
@@ -118,18 +127,18 @@ class BigfootEcircleClient
      * @throws Exception If the client is not found
      *
      */
-    public function getUserByEmail($email)
+    public function getUserByEmail($email, $groupId)
     {
         if (!$this->sessionId) {
             throw new Exception('Client no connected');
         }
 
-        $lookupUserByEmailOptions = $this->options('LookupUserByEmail');
+        $lookupUserByEmailOptions             = $this->options('LookupUserByEmail');
+        $lookupUserByEmailOptions->email      = $email;
+        $lookupUserByEmailOptions->session    = $this->sessionId;
+        $lookupUserByEmailOptions->groupId    = $groupId;
 
-        $lookupUserByEmailOptions->email   = $email;
-        $lookupUserByEmailOptions->session = $this->sessionId;
-
-        $result = $this->client->lookupUserByEmail($lookupUserByEmailOptions);
+        $result = $this->client->lookupMemberByEmail($lookupUserByEmailOptions);
 
         return $result;
     }
@@ -143,23 +152,44 @@ class BigfootEcircleClient
      * @return mixed
      * @throws Exception If the client is not found
      */
-    public function subscribeMemberByEmail($email,$groupId)
+    public function subscribeMemberByEmail($email,$groupId, $sendMessage = false)
     {
-
         if (!$this->sessionId) {
             throw new Exception('Client no connected');
         }
 
         $subscribeMemberByEmailOptions = $this->options('SubscribeMemberByEmail');
-
         $subscribeMemberByEmailOptions->email   = $email;
         $subscribeMemberByEmailOptions->session = $this->sessionId;
         $subscribeMemberByEmailOptions->groupId = $groupId;
-
+        $subscribeMemberByEmailOptions->sendMessage = $sendMessage;
         $result = $this->client->subscribeMemberByEmail($subscribeMemberByEmailOptions);
 
         return $result;
+    }
 
+    /**
+     *
+     * Unregister an user into a Newsletter by Email
+     *
+     * @param $email Email of a new client
+     * @param $groupId  Integer Id of the group in Ecircle
+     * @return mixed
+     * @throws Exception If the client is not found
+     */
+    public function unSubscribeMemberByEmail($email,$groupId, $sendMessage = false)
+    {
+        if (!$this->sessionId) {
+            throw new Exception('Client no connected');
+        }
 
+        $unSubscribeMemberByEmailOptions = $this->options('UnSubscribeMemberByEmail');
+        $unSubscribeMemberByEmailOptions->email   = $email;
+        $unSubscribeMemberByEmailOptions->session = $this->sessionId;
+        $unSubscribeMemberByEmailOptions->groupId = $groupId;
+        $unSubscribeMemberByEmailOptions->sendMessage = $sendMessage;
+        $result = $this->client->unsubscribeMemberByEmail($unSubscribeMemberByEmailOptions);
+
+        return $result;
     }
 }
