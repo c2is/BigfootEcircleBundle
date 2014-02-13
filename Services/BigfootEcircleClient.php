@@ -35,9 +35,16 @@ class BigfootEcircleClient
     public function __construct($container)
     {
         $this->container = $container;
-        $ecircle = $this->container->getParameter('bigfoot_ecircle');
-        $this->client = new Client($ecircle['client']['wsdl_url']);
-
+    }
+    
+    public function getClient()
+    {
+        if (!$this->client) {
+            $ecircle = $this->container->getParameter('bigfoot_ecircle');
+            $this->client = new Client($ecircle['client']['wsdl_url']);
+        }
+        
+        return $this->client;
     }
 
     /**
@@ -95,7 +102,7 @@ class BigfootEcircleClient
     public function connect($scope,$method = 'parameter')
     {
         $this->method = $method;
-        $result = $this->client->logon($this->options('Logon', $scope, $method));
+        $result = $this->getClient()->logon($this->options('Logon', $scope, $method));
         $this->sessionId = $result->logonReturn;
 
         return $this;
@@ -111,7 +118,7 @@ class BigfootEcircleClient
         $logoutOptions = $this->options('Logout');
         $logoutOptions->session = $this->sessionId;
 
-        $this->client->logout($logoutOptions);
+        $this->getClient()->logout($logoutOptions);
 
         $this->sessionId = null;
 
@@ -138,7 +145,7 @@ class BigfootEcircleClient
         $lookupUserByEmailOptions->session    = $this->sessionId;
         $lookupUserByEmailOptions->groupId    = $groupId;
 
-        $result = $this->client->lookupMemberByEmail($lookupUserByEmailOptions);
+        $result = $this->getClient()->lookupMemberByEmail($lookupUserByEmailOptions);
 
         return $result;
     }
@@ -163,7 +170,7 @@ class BigfootEcircleClient
         $subscribeMemberByEmailOptions->session = $this->sessionId;
         $subscribeMemberByEmailOptions->groupId = $groupId;
         $subscribeMemberByEmailOptions->sendMessage = $sendMessage;
-        $result = $this->client->subscribeMemberByEmail($subscribeMemberByEmailOptions);
+        $result = $this->getClient()->subscribeMemberByEmail($subscribeMemberByEmailOptions);
 
         return $result;
     }
@@ -188,7 +195,7 @@ class BigfootEcircleClient
         $unSubscribeMemberByEmailOptions->session = $this->sessionId;
         $unSubscribeMemberByEmailOptions->groupId = $groupId;
         $unSubscribeMemberByEmailOptions->sendMessage = $sendMessage;
-        $result = $this->client->unsubscribeMemberByEmail($unSubscribeMemberByEmailOptions);
+        $result = $this->getClient()->unsubscribeMemberByEmail($unSubscribeMemberByEmailOptions);
 
         return $result;
     }
