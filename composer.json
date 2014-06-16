@@ -12,6 +12,7 @@
     ],
     "require": {
         "bigfoot/core-bundle": "~2.1"
+    },
     "autoload": {
         "psr-0": { "Bigfoot\\Bundle\\EcircleBundle": "" }
     },
