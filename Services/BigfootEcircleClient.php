@@ -199,4 +199,41 @@ class BigfootEcircleClient
 
         return $result;
     }
+
+    public function createOrUpdateUserByEmailOptions($userXml, $sendMessage = false)
+    {
+        if (!$this->sessionId) {
+            throw new Exception('Client no connected');
+        }
+
+        $options              = $this->options('CreateOrUpdateUserByEmail');
+        $options->userXml     = $userXml;
+        $options->sendMessage = $sendMessage;
+        $options->session = $this->sessionId;
+        $result = $this->getClient()->createOrUpdateUserByEmail($options);
+
+        return $result;
+    }
+
+    public function subscribeOrRegisterUserMemberByEmail($userXml, $language, $groupId, $sendMessage = false)
+    {
+        if (!$this->sessionId) {
+            throw new Exception('Client no connected');
+        }
+
+        $userXmlSpec = '<?xml version="1.0" ?>
+        <user xmlns="http://webservices.ecircle-ag.com/ecm">
+             <email>'.$userXml.'</email>
+             <languagecode>'.$language.'</languagecode>
+        </user>';
+
+        $options              = $this->options('SubscribeOrRegisterUserMemberByEmail');
+        $options->userXmlSpec = $userXmlSpec;
+        $options->groupId     = $groupId;
+        $options->sendMessage = $sendMessage;
+        $options->session = $this->sessionId;
+        $result = $this->getClient()->subscribeOrRegisterUserMemberByEmail($options);
+
+        return $result;
+    }
 }
