@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "bigfoot/core-bundle": "~2.3.0"
+        "bigfoot/core-bundle": "~3.0"
     },
     "autoload": {
         "psr-0": { "Bigfoot\\Bundle\\EcircleBundle": "" }
@@ -20,7 +20,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "2.3.x-dev",
+            "dev-master": "3.0.x-dev",
             "dev-2.2": "2.2.x-dev"
         }
     }
